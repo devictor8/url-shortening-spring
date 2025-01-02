@@ -1,6 +1,7 @@
 package com.devictor.url_shortening.controllers;
 
 import com.devictor.url_shortening.domain.url.Url;
+import com.devictor.url_shortening.domain.url.UrlCreatedDTO;
 import com.devictor.url_shortening.domain.url.UrlRequestDTO;
 import com.devictor.url_shortening.services.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class UrlController {
     private UrlService urlService;
 
     @PostMapping
-    public ResponseEntity<Url> shortenURL(@RequestBody UrlRequestDTO requestBody) {
-        Url urlData = urlService.shortenURL(requestBody.url());
+    public ResponseEntity<UrlCreatedDTO> shortenURL(@RequestBody UrlRequestDTO requestBody) {
+        UrlCreatedDTO urlData = urlService.shortenURL(requestBody.url());
         return ResponseEntity.ok(urlData);
     }
 }

@@ -1,6 +1,7 @@
 package com.devictor.url_shortening.services;
 
 import com.devictor.url_shortening.domain.url.Url;
+import com.devictor.url_shortening.domain.url.UrlCreatedDTO;
 import com.devictor.url_shortening.exceptions.InvalidUrlExeceptions;
 import com.devictor.url_shortening.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ public class UrlService {
     @Autowired
     private UrlRepository urlRepository;
 
-    public Url shortenURL(String url) {
+    public UrlCreatedDTO shortenURL(String url) {
         if(url == null || url.isEmpty()) {
             throw new InvalidUrlExeceptions("URL cannot be empty");
         }
@@ -25,7 +26,7 @@ public class UrlService {
 
         Url urlObject;
         if((urlObject = urlRepository.findUrlByUrl(url)) != null) {
-            return urlObject;
+            return UrlCreatedDTO.createdDTO(urlObject);
         }
 
         String shortCode;
@@ -34,8 +35,13 @@ public class UrlService {
         } while (urlRepository.findUrlByShortCode(shortCode) != null);
 
         urlObject = new Url(url, shortCode);
-        return urlRepository.save(urlObject);
+
+        Url urlData = urlRepository.save(urlObject);
+
+        return UrlCreatedDTO.createdDTO(urlData);
     }
+
+
 
     private String generateShortCode() {
         StringBuilder shortCode = new StringBuilder();
