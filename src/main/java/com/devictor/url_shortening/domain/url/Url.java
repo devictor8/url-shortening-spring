@@ -1,19 +1,20 @@
-package com.devictor.url_shortening.domain;
+package com.devictor.url_shortening.domain.url;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
+@SequenceGenerator(name = "url_id_seq", allocationSize = 1)
 @NoArgsConstructor
+@AllArgsConstructor
 public class Url {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "url_id_seq")
     private Long id;
     @Column(unique = true)
     private String url;
@@ -26,7 +27,7 @@ public class Url {
     public Url(String url, String shortCode) {
         this.url = url;
         this.shortCode = shortCode;
-        accessCount = 0L;
+        this.accessCount = 0L;
     }
 
     @PrePersist

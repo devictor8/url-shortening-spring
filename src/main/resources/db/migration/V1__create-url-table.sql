@@ -1,8 +1,8 @@
 CREATE TABLE url (
-    id Integer PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     url VARCHAR(150) NOT NULL,
-    shortCode VARCHAR(20) NOT NULL,
-    createdAt TIMESTAMP NOT NULL,
-    updatedAt TIMESTAMP NOT NULL,
-    accessCount Integer NOT NULL
+    short_code VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    access_count INTEGER NOT NULL
 );
