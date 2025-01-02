@@ -1,15 +1,11 @@
 package com.devictor.url_shortening.controllers;
 
-import com.devictor.url_shortening.domain.url.Url;
-import com.devictor.url_shortening.domain.url.UrlCreatedDTO;
+import com.devictor.url_shortening.domain.url.UrlResponseDTO;
 import com.devictor.url_shortening.domain.url.UrlRequestDTO;
 import com.devictor.url_shortening.services.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/shorten")
@@ -18,8 +14,14 @@ public class UrlController {
     private UrlService urlService;
 
     @PostMapping
-    public ResponseEntity<UrlCreatedDTO> shortenURL(@RequestBody UrlRequestDTO requestBody) {
-        UrlCreatedDTO urlData = urlService.shortenURL(requestBody.url());
+    public ResponseEntity<UrlResponseDTO> shortenURL(@RequestBody UrlRequestDTO requestBody) {
+        UrlResponseDTO urlData = urlService.shortenURL(requestBody.url());
+        return ResponseEntity.status(201).body(urlData);
+    }
+
+    @GetMapping("/{shortCode}")
+    public ResponseEntity<UrlResponseDTO> getUrlByShortCode(@PathVariable String shortCode) {
+        UrlResponseDTO urlData = urlService.getUrlByShortCode(shortCode);
         return ResponseEntity.ok(urlData);
     }
 }

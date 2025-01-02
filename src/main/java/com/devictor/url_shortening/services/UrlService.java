@@ -1,8 +1,10 @@
 package com.devictor.url_shortening.services;
 
 import com.devictor.url_shortening.domain.url.Url;
-import com.devictor.url_shortening.domain.url.UrlCreatedDTO;
-import com.devictor.url_shortening.exceptions.InvalidUrlExeceptions;
+import com.devictor.url_shortening.domain.url.UrlResponseDTO;
+import com.devictor.url_shortening.exceptions.InvalidUrlException;
+import com.devictor.url_shortening.exceptions.InvalidShortCodeException;
+import com.devictor.url_shortening.exceptions.UrlNotFoundException;
 import com.devictor.url_shortening.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,18 +17,18 @@ public class UrlService {
     @Autowired
     private UrlRepository urlRepository;
 
-    public UrlCreatedDTO shortenURL(String url) {
+    public UrlResponseDTO shortenURL(String url) {
         if(url == null || url.isEmpty()) {
-            throw new InvalidUrlExeceptions("URL cannot be empty");
+            throw new InvalidUrlException("URL cannot be empty");
         }
 
         if(!validateUrl(url)) {
-            throw new InvalidUrlExeceptions("URL format is invalid");
+            throw new InvalidUrlException("URL format is invalid");
         }
 
         Url urlObject;
         if((urlObject = urlRepository.findUrlByUrl(url)) != null) {
-            return UrlCreatedDTO.createdDTO(urlObject);
+            return UrlResponseDTO.createDTO(urlObject);
         }
 
         String shortCode;
@@ -38,10 +40,21 @@ public class UrlService {
 
         Url urlData = urlRepository.save(urlObject);
 
-        return UrlCreatedDTO.createdDTO(urlData);
+        return UrlResponseDTO.createDTO(urlData);
     }
 
+    public UrlResponseDTO getUrlByShortCode(String shortCode) {
+        if(shortCode == null || shortCode.isEmpty()) {
+            throw new InvalidShortCodeException("ShortCode cannot be empty");
+        }
 
+        Url urlData = urlRepository.findUrlByShortCode(shortCode);
+        if (urlData == null) {
+            throw new UrlNotFoundException();
+        }
+
+        return UrlResponseDTO.createDTO(urlData);
+    }
 
     private String generateShortCode() {
         StringBuilder shortCode = new StringBuilder();
