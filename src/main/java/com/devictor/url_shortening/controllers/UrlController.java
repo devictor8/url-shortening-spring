@@ -24,4 +24,10 @@ public class UrlController {
         UrlResponseDTO urlData = urlService.getUrlByShortCode(shortCode);
         return ResponseEntity.ok(urlData);
     }
+
+    @PutMapping("/{shortCode}")
+    public ResponseEntity<UrlResponseDTO> updateUrl(@PathVariable String shortCode, @RequestBody UrlRequestDTO requestBody) {
+        UrlResponseDTO urlData = urlService.updateUrl(shortCode, requestBody.url());
+        return ResponseEntity.ok(urlData);
+    }
 }

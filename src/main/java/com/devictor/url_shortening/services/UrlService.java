@@ -4,6 +4,7 @@ import com.devictor.url_shortening.domain.url.Url;
 import com.devictor.url_shortening.domain.url.UrlResponseDTO;
 import com.devictor.url_shortening.exceptions.InvalidUrlException;
 import com.devictor.url_shortening.exceptions.InvalidShortCodeException;
+import com.devictor.url_shortening.exceptions.UrlAlreadyInUseException;
 import com.devictor.url_shortening.exceptions.UrlNotFoundException;
 import com.devictor.url_shortening.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,16 @@ public class UrlService {
     private UrlRepository urlRepository;
 
     public UrlResponseDTO shortenURL(String url) {
-        if(url == null || url.isEmpty()) {
-            throw new InvalidUrlException("URL cannot be empty");
+        if (url == null || url.isEmpty()) {
+            throw new InvalidUrlException("URL cannot be empty.");
         }
 
-        if(!validateUrl(url)) {
-            throw new InvalidUrlException("URL format is invalid");
+        if (!validateUrl(url)) {
+            throw new InvalidUrlException("URL format is invalid.");
         }
 
         Url urlObject;
-        if((urlObject = urlRepository.findUrlByUrl(url)) != null) {
+        if ((urlObject = urlRepository.findUrlByUrl(url)) != null) {
             return UrlResponseDTO.createDTO(urlObject);
         }
 
@@ -44,8 +45,8 @@ public class UrlService {
     }
 
     public UrlResponseDTO getUrlByShortCode(String shortCode) {
-        if(shortCode == null || shortCode.isEmpty()) {
-            throw new InvalidShortCodeException("ShortCode cannot be empty");
+        if (shortCode == null || shortCode.isEmpty()) {
+            throw new InvalidShortCodeException("ShortCode cannot be empty.");
         }
 
         Url urlData = urlRepository.findUrlByShortCode(shortCode);
@@ -53,7 +54,36 @@ public class UrlService {
             throw new UrlNotFoundException();
         }
 
+        urlData.urlVisited();
+        urlRepository.save(urlData);
         return UrlResponseDTO.createDTO(urlData);
+    }
+
+    public UrlResponseDTO updateUrl(String shortCode, String newUrl) {
+        if (shortCode == null || shortCode.isEmpty()) {
+            throw new InvalidShortCodeException("shortCode cannot be empty.");
+        }
+
+        if (newUrl == null || newUrl.isEmpty()) {
+            throw new InvalidUrlException("newURL cannot be empty.");
+        }
+
+        if(!validateUrl(newUrl)) {
+            throw new InvalidUrlException("URL format is invalid.");
+        }
+
+        if (urlRepository.findUrlByUrl(newUrl) != null) {
+            throw new UrlAlreadyInUseException("Url is already shorted by another shortCode");
+        }
+
+        Url url = urlRepository.findUrlByShortCode(shortCode);
+        if (url == null) {
+            throw new UrlNotFoundException("No Url has this shortCode");
+        }
+
+        url.setUrl(newUrl);
+        Url urlUpdated = urlRepository.save(url);
+        return UrlResponseDTO.createDTO(urlUpdated);
     }
 
     private String generateShortCode() {

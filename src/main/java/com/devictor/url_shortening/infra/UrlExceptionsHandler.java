@@ -1,6 +1,7 @@
 package com.devictor.url_shortening.infra;
 
 import com.devictor.url_shortening.exceptions.InvalidUrlException;
+import com.devictor.url_shortening.exceptions.UrlAlreadyInUseException;
 import com.devictor.url_shortening.exceptions.UrlNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,5 +30,15 @@ public class UrlExceptionsHandler extends ResponseEntityExceptionHandler {
                 e.getMessage()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<RestErrorMessage> urlAlreadyInUseHandler(UrlAlreadyInUseException e) {
+        RestErrorMessage response = new RestErrorMessage(
+                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.value(),
+                e.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

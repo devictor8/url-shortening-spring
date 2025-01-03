@@ -40,4 +40,8 @@ public class Url {
     void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void urlVisited() {
+        this.accessCount += 1;
+    }
 }
