@@ -86,6 +86,20 @@ public class UrlService {
         return UrlResponseDTO.createDTO(urlUpdated);
     }
 
+    public void DeleteShortUrl(String shortCode) {
+        if (shortCode == null || shortCode.isEmpty()) {
+            throw new InvalidShortCodeException("ShortCode cannot be empty.");
+        }
+
+        Url url = urlRepository.findUrlByShortCode(shortCode);
+
+        if (url ==  null) {
+            throw new UrlNotFoundException("No url has this shortCode");
+        }
+
+        urlRepository.delete(url);
+    }
+
     private String generateShortCode() {
         StringBuilder shortCode = new StringBuilder();
         String charSet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";

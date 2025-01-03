@@ -30,4 +30,11 @@ public class UrlController {
         UrlResponseDTO urlData = urlService.updateUrl(shortCode, requestBody.url());
         return ResponseEntity.ok(urlData);
     }
+
+    @DeleteMapping("/{shortCode}")
+    public ResponseEntity<Void> deleteUrl(@PathVariable String shortCode) {
+        urlService.DeleteShortUrl(shortCode);
+        return ResponseEntity.noContent().build();
+    }
+
 }
