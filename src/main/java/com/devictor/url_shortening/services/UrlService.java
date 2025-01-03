@@ -2,6 +2,7 @@ package com.devictor.url_shortening.services;
 
 import com.devictor.url_shortening.domain.url.Url;
 import com.devictor.url_shortening.domain.url.UrlResponseDTO;
+import com.devictor.url_shortening.domain.url.UrlStatsResponseDTO;
 import com.devictor.url_shortening.exceptions.InvalidUrlException;
 import com.devictor.url_shortening.exceptions.InvalidShortCodeException;
 import com.devictor.url_shortening.exceptions.UrlAlreadyInUseException;
@@ -98,6 +99,19 @@ public class UrlService {
         }
 
         urlRepository.delete(url);
+    }
+
+    public UrlStatsResponseDTO getUrlStats(String shortCode) {
+        if (shortCode == null || shortCode.isEmpty()) {
+            throw new InvalidShortCodeException("ShortCode cannot be empty.");
+        }
+
+        Url urlData = urlRepository.findUrlByShortCode(shortCode);
+        if (urlData == null) {
+            throw new UrlNotFoundException();
+        }
+
+        return UrlStatsResponseDTO.createDTO(urlData);
     }
 
     private String generateShortCode() {

@@ -2,6 +2,7 @@ package com.devictor.url_shortening.controllers;
 
 import com.devictor.url_shortening.domain.url.UrlResponseDTO;
 import com.devictor.url_shortening.domain.url.UrlRequestDTO;
+import com.devictor.url_shortening.domain.url.UrlStatsResponseDTO;
 import com.devictor.url_shortening.services.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,4 +38,9 @@ public class UrlController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{shortCode}/stats")
+    public ResponseEntity<UrlStatsResponseDTO> getUrlStats(@PathVariable String shortCode) {
+        UrlStatsResponseDTO urlData = urlService.getUrlStats(shortCode);
+        return ResponseEntity.ok(urlData);
+    }
 }
