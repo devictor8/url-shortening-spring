@@ -22,7 +22,7 @@ public class UrlExceptionsHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(UrlNotFoundException.class)
     private ResponseEntity<RestErrorMessage> urlNotFoundHandler(UrlNotFoundException e) {
         RestErrorMessage response = new RestErrorMessage(
                 HttpStatus.NOT_FOUND,
@@ -32,7 +32,7 @@ public class UrlExceptionsHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(UrlAlreadyInUseException.class)
     private ResponseEntity<RestErrorMessage> urlAlreadyInUseHandler(UrlAlreadyInUseException e) {
         RestErrorMessage response = new RestErrorMessage(
                 HttpStatus.BAD_REQUEST,
